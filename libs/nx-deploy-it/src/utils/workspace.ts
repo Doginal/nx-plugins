@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { resolve } from 'path';
 import {
   ProjectDefinition,
@@ -17,6 +18,16 @@ import { readWorkspaceConfigPath } from '@nrwl/workspace';
 export function getRealWorkspacePath() {
   // TODO!: find a better way
   return process.cwd();
+}
+
+export function getWorkspaceJson() {
+  // TODO!: find a better way
+  const angularJson = getRealWorkspacePath() + '/angular.json';
+  const workspaceJson = getRealWorkspacePath() + '/workspace.json';
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  return fs.existsSync(angularJson)
+    ? require(angularJson)
+    : require(workspaceJson);
 }
 
 export function getPulumiBinaryPath() {
@@ -80,7 +91,8 @@ export function getApplications(
 }
 
 export function getProjectConfig(context: BuilderContext) {
-  const workspaceConfig = readWorkspaceConfigPath();
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const workspaceConfig = getWorkspaceJson();
 
   return workspaceConfig.projects[context.target.project];
 }
